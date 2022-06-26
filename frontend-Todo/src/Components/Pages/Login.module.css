@@ -1,0 +1,35 @@
+.heading {
+    text-align: center;
+}
+.form {
+    display: flex;
+    flex-direction: column; 
+    justify-content:center;
+    text-align: center;
+   
+}
+
+.username, .password {
+    margin : 10px 10px;
+}
+
+.btn {
+    border-radius: 0.4em;
+    border-style: solid;
+    padding: 6px 15px;
+    width: 11.25rem;
+    margin: 1rem;
+
+}
+.btn:hover {
+    border-radius: 0.4em;
+    border-style: solid;
+    padding: 6px 15px;
+    background-color: rgba(112, 45, 207, 0.84);
+}
+
+/* #username , #password{
+    box-sizing: border-box;
+    border: 1.5px solid;
+    border-radius: 4px;
+} */
