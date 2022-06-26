@@ -1,31 +1,36 @@
 const { validationResult } = require("express-validator");
 const User = require("../models/users");
-// const List  =require("../models/users");
+const bcrypt = require("bcrypt");
+
 const HttpError = require("../models/HttpError");
 
 const getAllUsers = async (req, res) => {
-  const users = await User.find({});
+  const users = await User.find({},"-password");//to get all users without passwords
   res.json({ users });
 };
 
 const getUserById = async (req, res) => {
   const id = req.params.uid;
-  const user = await User.findById({ _id: id });
+  const user = await User.findById({ _id: id },"-password");
   res.send({ user });
 };
 
 const signUp = async (req, res) => {
   const errors = validationResult(req);
+  let hashPassword=''
   if (!errors.isEmpty()) {
     console.log(errors);
     throw new HttpError("Invalid inputs,please check again", 422);
   }
   const { email, password } = req.body;
+  if(password){
+   hashPassword = await bcrypt.hash(password,10);
+  }
   const existinguser = await User.findOne({ email: email });
   if (!existinguser) {
     const createUser = new User({
       email,
-      password,
+      password:hashPassword,
     });
     createUser.save((err) => {
       if (err) {
@@ -45,15 +50,18 @@ const login = async (req, res) => {
     throw new HttpError("Invalid inputs,please check again", 422);
   }
   const { email, password } = req.body;
+  
   const existinguser = await User.findOne({ email: email });
+  let hashPassword = await bcrypt.compare(password,existinguser.password); // returns true or false
   console.log(existinguser);
+  console.log(hashPassword);
   if (!existinguser) {
     res.json({ message: "No User found, Please Signup to continue!" });
   } else {
-    if (existinguser.password !== password) {
+    if (!hashPassword) {
       res.json("invalid password");
     }
-    if (existinguser && existinguser.password === password) {
+    if (existinguser && hashPassword) {
       res.json({ message: "Succesfully LoggedIn!", existinguser });
     }
   }
@@ -78,7 +86,7 @@ const addTask = async (req, res) => {
 const getTasks = async (req, res) => {
   const id = req.params.uid;
   console.log(id);
-  const olduser = await User.find({ _id: id });
+  const olduser = await User.find({ _id: id },"-password");
   if (olduser) {
     tasks = olduser[0].task;
     res.json({ tasks });
