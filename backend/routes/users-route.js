@@ -21,8 +21,6 @@ router.post(
   ],
   userController.login
 );
-router.post("/:uid/tasks", userController.addTask);
-router.get("/:uid/tasks", userController.getTasks);
-router.delete("/:uid/tasks/:index", userController.deleteTask);
+
 
 module.exports = router;

@@ -5,6 +5,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 const userrouter = require("./routes/users-route");
+const taskrouter = require("./routes/tasks-route");
 
 const app = express();
 
@@ -21,7 +22,7 @@ const corsOpts = {
 app.use(cors(corsOpts));
 
 app.use("/api/users", userrouter);
-
+app.use("/api",taskrouter);
 app.use((error, req, res, next) => {
   if (res.headerSent) {
     return next(error);
